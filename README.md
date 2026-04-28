@@ -1,16 +1,16 @@
-# React + Vite
+# Lyra - Oráculo Digital 🔮<br>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O **Lyra** é uma aplicação desenvolvida em React 19. É o ponto de contato do usuário com a API REST Lyra (Spring Boot) para gerar interpretações astrológicas e de tarot personalizadas.<br>
 
-Currently, two official plugins are available:
+# Tecnologias e Ferramentas<br>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19:** Utilização de Hooks e gerenciamento de estado reativo.<br>
+- **Vite:** Ferramenta de build para um desenvolvimento ágil.<br>
+- **Tailwind CSS v4:** Estilização utilitária para design responsivo.<br>
+- **Axios:** Cliente HTTP para comunicação com a API REST.<br>
 
-## React Compiler
+## Funcionalidades<br>
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+*   **Autenticação de Sessão:** Tela de login focada na identificação na sessão (Nome e Data de Nascimento).<br>
+*   **Dashboard:** Interface imersiva com SVGs animados que reage aos estados de loading.<br>
+*   **Camada de Integração Isolada:** Custom hook que centraliza a lógica do Axios e gerencia de forma inteligente o estado da requisição.<br>
