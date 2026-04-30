@@ -1,24 +1,24 @@
-export default function Sidebar({ abaAtiva, setAbaAtiva, onLogout }) {
+import { NavLink } from "react-router-dom";
+
+export default function Sidebar({ onLogout }) {
+  const baseLinkStyle = "w-full flex items-center justify-center md:justify-start gap-4 p-3 rounded-2xl transition-all duration-300";
+
   return (
     <nav className="w-20 md:w-64 bg-slate-900/50 border-r border-white/5 flex flex-col p-6 z-30 transition-all duration-300">
 
       <div className="flex-1 space-y-4 w-full">
-        <button
-          onClick={() => setAbaAtiva("home")}
-          className={`w-full flex items-center justify-center md:justify-start gap-4 p-3 
-            rounded-2xl transition-all ${
-            abaAtiva === "home"
-              ? "bg-purple-500/10 text-purple-300"
-              : "text-slate-500 hover:text-slate-300"
-          }`}
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            `${baseLinkStyle} ${
+              isActive
+                ? "bg-purple-500/10 text-purple-300 shadow-inner"
+                : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+            }`
+          }
           aria-label="Ir para Consultas"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -29,24 +29,20 @@ export default function Sidebar({ abaAtiva, setAbaAtiva, onLogout }) {
           <span className="hidden md:block text-xs font-bold uppercase tracking-widest">
             Consultar
           </span>
-        </button>
+        </NavLink>
 
-        <button
-          onClick={() => setAbaAtiva("historico")}
-          className={`w-full flex items-center justify-center md:justify-start gap-4 p-3 
-            rounded-2xl transition-all ${
-            abaAtiva === "historico"
-              ? "bg-purple-500/10 text-purple-300"
-              : "text-slate-500 hover:text-slate-300"
-          }`}
+        <NavLink
+          to="/history"
+          className={({ isActive }) =>
+            `${baseLinkStyle} ${
+              isActive
+                ? "bg-purple-500/10 text-purple-300 shadow-inner"
+                : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+            }`
+          }
           aria-label="Ir para Histórico"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -57,13 +53,13 @@ export default function Sidebar({ abaAtiva, setAbaAtiva, onLogout }) {
           <span className="hidden md:block text-xs font-bold uppercase tracking-widest">
             Histórico
           </span>
-        </button>
+        </NavLink>
       </div>
 
       <button
         onClick={onLogout}
         className="mt-auto pt-6 border-t border-white/5 opacity-40 text-[10px] text-center 
-        uppercase tracking-[0.2em] hover:opacity-100 transition-opacity"
+        uppercase tracking-[0.2em] hover:opacity-100 hover:text-red-400 transition-all"
         aria-label="Sair"
       >
         Sair
