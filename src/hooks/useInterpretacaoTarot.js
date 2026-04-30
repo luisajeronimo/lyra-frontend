@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
-import axios from "axios";
+import { postDadosTarot } from "../services/tarotService";
 
-export const interpretacaoTarot = () => {
+export const useInterpretacaoTarot = () => {
   const [resultado, setResultado] = useState(null);
   const [mensagemErro, setMensagemErro] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -12,21 +12,17 @@ export const interpretacaoTarot = () => {
     setResultado(null);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
-      const response = await axios.post(
-        `${apiUrl}/api/interpretacao/informarDados`,
-        user,
-      );
-      setResultado(response.data);
-      setIsLoading(false);
+      const data = await postDadosTarot(user);
+      setResultado(data);
       return true;
     } catch (error) {
-      console.error("Erro na consulta mística:", error);
+      console.error("Erro na consulta:", error);
       setMensagemErro(
-        "As correntes de energia estão instáveis. Certifique-se de que o Backend está ligado.",
+        "As correntes de energia estão instáveis. Certifique-se de que o Backend está ligado."
       );
-      setIsLoading(false);
       return false;
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
