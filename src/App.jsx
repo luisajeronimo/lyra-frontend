@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import History from "./pages/History";
+import SignUp from "./pages/SignUp";
 
 import Sidebar from "./components/Sidebar";
 
@@ -46,6 +47,16 @@ export default function App() {
           element={
             !isLoggedIn ? (
               <Login onLoginSuccess={handleLoginSuccess} />
+            ) : (
+              <Navigate to="/" /> 
+            )
+          } 
+        />
+        <Route 
+          path="/signup" 
+          element={
+            !isLoggedIn ? (
+              <SignUp onLoginSuccess={handleLoginSuccess} />
             ) : (
               <Navigate to="/" /> 
             )
