@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { authService } from "../services/authService";
 
 const BRAZILIAN_STATES = [
   "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
@@ -10,15 +12,17 @@ export default function SignUp({ onLoginSuccess }) {
   const [user, setUser] = useState({ 
     nome: "", 
     email: "", 
-    dataNascimento: "", 
-    horarioNascimento: "", 
+    senha: "" ,
     estado: "", 
-    cidade: "", 
-    senha: "" 
+    cidade: "",
+    dataNascimento: "", 
+    horaNascimento: ""
+
   });
   const [erros, setErros] = useState({}); 
+  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     const novosErros = {}; 
 
@@ -46,8 +50,8 @@ export default function SignUp({ onLoginSuccess }) {
       novosErros.dataNascimento = "Insira um ano de nascimento válido.";
     }
 
-    if (!user.horarioNascimento) {
-      novosErros.horarioNascimento = "Insira o horário de nascimento.";
+    if (!user.horaNascimento) {
+      novosErros.horaNascimento = "Insira a hora de nascimento.";
     }
 
     if (user.senha.length < 6) {
@@ -59,10 +63,24 @@ export default function SignUp({ onLoginSuccess }) {
       return;
     }
 
-    // Aqui você pode integrar com a API de cadastro do seu backend no futuro
-    // ex: await api.post('/register', user);
-    
-    onLoginSuccess(user);
+    try {
+      setLoading(true);
+      
+      const [year, month, day] = user.dataNascimento.split("-");
+      const userPayload = {
+        ...user,
+        dataNascimento: `${day}/${month}/${year}`,
+        horaNascimento: user.horaNascimento.substring(0, 5)
+      };
+
+      const responseAPI = await authService.register(userPayload);
+      
+      onLoginSuccess(responseAPI.user || userPayload);
+    } catch (apiError) {
+      setErros({ api: apiError.message });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getInputClass = (hasError) => 
@@ -84,7 +102,13 @@ export default function SignUp({ onLoginSuccess }) {
           noValidate
           className="bg-slate-900/40 border border-white/5 p-8 rounded-[2.5rem] shadow-2xl backdrop-blur-md space-y-6"
         >
-          {Object.keys(erros).length > 0 && (
+          {erros.api && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase tracking-widest p-3 rounded-xl text-center animate-in slide-in-from-top-2">
+              {erros.api}
+            </div>
+          )}
+
+          {Object.keys(erros).length > 0 && !erros.api && (
             <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase tracking-widest p-3 rounded-xl text-center animate-in slide-in-from-top-2">
               Por favor, preencha corretamente os campos destacados.
             </div>
@@ -122,7 +146,7 @@ export default function SignUp({ onLoginSuccess }) {
             {erros.email && <p className="text-red-400 text-[10px] ml-2">{erros.email}</p>}
           </div>
             
-          <div className="space-y-2 w-full">
+          <div className="space-y-2 w-full ">
             <label htmlFor="estado" className="text-[10px] uppercase tracking-[0.2em] text-slate-500 ml-2 font-bold cursor-pointer">
               Local de Nascimento
             </label>
@@ -177,18 +201,18 @@ export default function SignUp({ onLoginSuccess }) {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="horarioNascimento" className="text-[10px] uppercase tracking-[0.2em] text-slate-500 ml-2 font-bold cursor-pointer">
+            <label htmlFor="horaNascimento" className="text-[10px] uppercase tracking-[0.2em] text-slate-500 ml-2 font-bold cursor-pointer">
               Horário de Nascimento
             </label>
             <input
-              id="horarioNascimento"
+              id="horaNascimento"
               required
               type="time"
-              value={user.horarioNascimento}
-              onChange={(e) => setUser({ ...user, horarioNascimento: e.target.value })}
-              className={getInputClass(erros.horarioNascimento)}
+              value={user.horaNascimento}
+              onChange={(e) => setUser({ ...user, horaNascimento: e.target.value })}
+              className={getInputClass(erros.horaNascimento)}
             />
-            {erros.horarioNascimento && <p className="text-red-400 text-[10px] ml-2">{erros.horarioNascimento}</p>}
+            {erros.horaNascimento && <p className="text-red-400 text-[10px] ml-2">{erros.horaNascimento}</p>}
           </div>
 
           <div className="space-y-2">
@@ -208,10 +232,15 @@ export default function SignUp({ onLoginSuccess }) {
 
           <button
             type="submit"
-            className="w-full py-4 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-[0.2em] shadow-xl shadow-purple-900/20 transition-all active:scale-[0.98]"
+            disabled={loading}
+            className="w-full py-4 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-[0.2em] shadow-xl shadow-purple-900/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Criar conta
+            {loading ? "Conectando ao oráculo..." : "Criar conta"}
           </button>
+
+          <p className="text-slate-500 font-normal uppercase text-xs align-baseline text-center pt-2">
+            Já tem uma conta? <Link to="/login" className="text-purple-500 hover:underline">Faça login</Link>
+          </p>
         </form>
       </div>
     </div>

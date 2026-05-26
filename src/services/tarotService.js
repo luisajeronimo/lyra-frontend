@@ -1,9 +1,6 @@
-import axios from "axios";
+import api from "./api";
 
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
-
-export const postDadosTarot = async (userData) => {
-
-  const response = await axios.post(`${apiUrl}/api/interpretacao/informarDados`, userData);
+export const postDadosTarot = async () => {
+  const response = await api.post("/api/interpretacao/gerar-leitura-do-dia");
   return response.data;
 };
