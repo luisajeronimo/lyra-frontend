@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { authService } from "../services/authService";
 
 export default function Login({ onLoginSuccess }) {
   const [user, setUser] = useState({ email: "", senha: "" });
   const [erros, setErros] = useState({}); 
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const novosErros = {}; 
 
@@ -22,8 +25,15 @@ export default function Login({ onLoginSuccess }) {
       return;
     }
 
-    // Aqui será feita a integração com o back-end para conferir a senha no futuro
-    onLoginSuccess(user);
+    try {
+      setLoading(true);
+      const responseApi = await authService.login(user);
+      onLoginSuccess({ ...user, nome: responseApi.nome });
+    } catch (apiError) {
+      setErros({ api: apiError.message });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getInputClass = (hasError) => 
@@ -48,7 +58,13 @@ export default function Login({ onLoginSuccess }) {
           noValidate
           className="bg-slate-900/40 border border-white/5 p-8 rounded-[2.5rem] shadow-2xl backdrop-blur-md space-y-6"
         >
-          {Object.keys(erros).length > 0 && (
+          {erros.api && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase tracking-widest p-3 rounded-xl text-center animate-in slide-in-from-top-2">
+              {erros.api}
+            </div>
+          )}
+
+          {Object.keys(erros).length > 0 && !erros.api && (
             <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase tracking-widest p-3 rounded-xl text-center animate-in slide-in-from-top-2">
               Por favor, verifique suas credenciais.
             </div>
@@ -88,10 +104,15 @@ export default function Login({ onLoginSuccess }) {
 
           <button
             type="submit"
-            className="w-full py-4 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-[0.2em] shadow-xl shadow-purple-900/20 transition-all active:scale-[0.98]"
+            disabled={loading}
+            className="w-full py-4 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-[0.2em] shadow-xl shadow-purple-900/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Acessar o Oráculo
+            {loading ? "Acessando..." : "Acessar o Oráculo"}
           </button>
+
+          <p className="text-slate-500 font-normal uppercase text-xs align-baseline text-center">
+            Ainda não tem uma conta? <Link to="/signup" className="text-purple-500 hover:underline">Cadastre-se</Link>
+          </p>
         </form>
       </div>
     </div>

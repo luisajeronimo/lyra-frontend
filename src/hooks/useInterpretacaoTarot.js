@@ -6,13 +6,13 @@ export const useInterpretacaoTarot = () => {
   const [mensagemErro, setMensagemErro] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const consultarEnergias = useCallback(async (user) => {
+  const consultarEnergias = useCallback(async () => {
     setIsLoading(true);
     setMensagemErro("");
     setResultado(null);
 
     try {
-      const data = await postDadosTarot(user);
+      const data = await postDadosTarot();
       setResultado(data);
       return true;
     } catch (error) {
